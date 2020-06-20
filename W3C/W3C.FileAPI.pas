@@ -105,7 +105,7 @@ type
   public
     class function createObjectURL(blob: JBlob): String;
     class function createFor(blob: JBlob): String;
-    procedure revokeObjectURL(url: String);
+    class procedure revokeObjectURL(url: String);
   end;
 
   JHTMLInputElement = partial class external 'HTMLInputElement' (JHTMLElement)

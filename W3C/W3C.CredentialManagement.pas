@@ -45,7 +45,8 @@ type
     id: String; // required
   end;
 
-  // TCredentialBodyType = Union;
+  // TCredentialBodyType = JFormData or URLSearchParams;
+
   JPasswordCredentialData = class external 'PasswordCredentialData' (JCredentialData)
   public
     &name: String;

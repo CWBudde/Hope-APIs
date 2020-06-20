@@ -1,4 +1,4 @@
-unit WHATWG.Html;
+unit WHATWG.HTML;
 
 interface
 

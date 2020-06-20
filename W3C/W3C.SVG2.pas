@@ -311,6 +311,14 @@ type
     height: JSVGAnimatedLength; { SameObject }
     currentScale: Float;
     currentTranslate: JDOMPointReadOnly; { SameObject }
+
+    // from JSVGFitToViewBox
+    viewBox: JSVGAnimatedRect; { SameObject }
+    preserveAspectRatio: JSVGAnimatedPreserveAspectRatio; { SameObject }
+
+    // from JSVGZoomAndPan
+    zoomAndPan: Integer;
+
     function getIntersectionList(rect: JDOMRectReadOnly; referenceElement: JSVGElement): JNodeList;
     function getEnclosureList(rect: JDOMRectReadOnly; referenceElement: JSVGElement): JNodeList;
     function checkIntersection(element: JSVGElement; rect: JDOMRectReadOnly): Boolean;

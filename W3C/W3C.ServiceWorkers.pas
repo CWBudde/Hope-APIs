@@ -78,7 +78,7 @@ type
     property installing: JServiceWorker; // read only
     property waiting: JServiceWorker;    // read only
     property active: JServiceWorker;     // read only
-		class property navigationPreload: JNavigationPreloadManager;// read only
+		property navigationPreload: JNavigationPreloadManager;// read only  { SameObject }
   end;
 
   JRegistrationOptions = class external 'RegistrationOptions'
@@ -128,7 +128,7 @@ type
     procedure startMessages;
 
     property controller: JServiceWorker;
-    class property ready: JServiceWorkerRegistration; // read only
+    property ready: JPromiseServiceWorkerRegistration; // read only { SameObject }
   end;
 
   JServiceWorkerMessageEventInit = class external 'ServiceWorkerMessageEventInit' (JEventInit)
@@ -246,8 +246,8 @@ type
 
     function skipWaiting: JPromiseVoid; { NewObject }
 
-    class property clients: JClients; { SameObject }
-    class property registration: JServiceWorkerRegistration; { SameObject }
+    property clients: JClients; { SameObject }
+    property registration: JServiceWorkerRegistration; { SameObject }
   end;
 
   JExtendableEventInit = class external 'ExtendableEventInit' (JEventInit)
@@ -257,7 +257,7 @@ type
   // Exposed = ServiceWorker
   JExtendableEvent = class external 'ExtendableEvent' (JEvent)
   public
-    procedure waitUntil(f: Variant);
+    procedure waitUntil(f: JPromise);
     constructor Create(&type: String); overload;
     constructor Create(&type: String; eventInitDict: JExtendableEventInit); overload;
   end;
@@ -271,17 +271,6 @@ type
     replacesClientId: String;
   end;
 
-  TOnFulFillResponse = procedure(response: JResponse);
-
-  JPromiseResponse = class external 'Promise' (JPromise)
-  public
-    constructor Create(Executor: procedure(resolve: TOnFulFillResponse; reject: TOnRejected));
-    class function resolve(value: JResponse): JPromiseResponse;
-
-    function &then(onFulfilled: TOnFulFillResponse): JPromiseResponse; overload;
-    function &then(onFulfilled: TOnFulFillResponse; onRejected: TOnRejected): JPromiseResponse; overload;
-  end;
-
   // Exposed = ServiceWorker
   JFetchEvent = class external 'FetchEvent' (JExtendableEvent)
   public
@@ -289,7 +278,7 @@ type
     constructor Create(&type: String; eventInitDict: JFetchEventInit); overload;
     procedure respondWith(r: JPromiseResponse);
 
-    class property request: JRequest; { SameObject }
+    property request: JRequest; { SameObject }
     property preloadResponse: JPromise;
     property clientId: String;
     property resultingClientId: String;
@@ -408,12 +397,12 @@ type
 
   JWorkerNavigator = partial class external 'WorkerNavigator'
   public
-    class property serviceWorker: JServiceWorkerContainer; { SecureContext,SameObject }
+    property serviceWorker: JServiceWorkerContainer; { SecureContext,SameObject }
   end;
 
-  JNavigator = partial class external 'Navigator'
+  JNavigator = partial class external 'navigator'
   public
-    class property serviceWorker: JServiceWorkerContainer; { SecureContext,SameObject }
+    property serviceWorker: JServiceWorkerContainer; { SecureContext,SameObject }
   end;
 
   JWindowOrWorkerGlobalScope = partial class external 'WindowOrWorkerGlobalScope'

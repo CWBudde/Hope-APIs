@@ -48,7 +48,9 @@ type
     navigation: JPerformanceNavigation;
   end;
 
+(*
   JWindow = partial class external 'Window'
   public
     performance: JPerformance; { Replaceable }
   end;
+*)

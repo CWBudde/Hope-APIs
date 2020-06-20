@@ -13,4 +13,6 @@ type
     class function keys(O: JObject): array of String;
     class function values(O: JObject): array of String;
     class function entries(O: JObject): array of array of Variant;
+
+    class function defineProperty(obj: JObject; prop: String; description: Variant): JObject;
   end;

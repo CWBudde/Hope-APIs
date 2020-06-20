@@ -82,6 +82,7 @@ type
 
   JScrollIntoViewOptions = class external 'ScrollIntoViewOptions'
   public
+    behaviour: String;
     block: JScrollLogicalPosition;
     &inline: JScrollLogicalPosition;
   end;
@@ -99,7 +100,8 @@ type
     function getClientRects: array of JDOMRect;
     function getBoundingClientRect: JDOMRect; { NewObject }
     procedure scrollIntoView; overload;
-    procedure scrollIntoView(arg: Variant {TODO}); overload;
+    procedure scrollIntoView(alignToTop: Boolean); overload;
+    procedure scrollIntoView(scrollIntoViewOptions: JScrollIntoViewOptions); overload;
     procedure scroll; overload;
     procedure scroll(options: JScrollToOptions); overload;
     procedure scroll(x, y: Float); overload;
@@ -206,3 +208,6 @@ type
     procedure scrollBy(options: JScrollToOptions); overload;
     procedure scrollBy(x, y: Float); overload;
   end;
+
+var
+  Screen external 'screen': JScreen;

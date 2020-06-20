@@ -98,3 +98,7 @@ type
     constructor Create(scriptURL: String); overload;
     constructor Create(scriptURL, Name: String); overload;
   end;
+
+  JWindow = partial class external 'Window' (JEventTarget)
+    applicationCache: JApplicationCache;
+  end;

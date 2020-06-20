@@ -3,32 +3,39 @@ unit WHATWG.Fetch;
 interface
 
 uses
-  ECMA.TypedArray, WHATWG.DOM, WHATWG.HTML, W3C.FileAPI;
+  ECMA.Promise, ECMA.TypedArray, WHATWG.DOM, WHATWG.HTML, W3C.FileAPI;
 
 type
-  // Constructor( optional HeadersInit init),Exposed=( Window , Worker)
+  JHeadersInit = array of array of String;
+
+  // Exposed=( Window , Worker)
   JHeaders = class external 'Headers'
   public
-    procedure append(&name: String; value: String);
+    constructor Create; overload;
+    constructor Create(init: JHeadersInit); overload;
+
+    procedure append(&name, value: String);
     procedure delete(&name: String);
     function get(&name: String): String;
     function has(&name: String): Boolean;
     procedure set(&name: String; value: String);
-//  iterable<ByteString, ByteString>;
+
+    // property iterable[key: String]: String read get write set; default;
   end;
 
-  TBodyInit = Variant;
-  TResponseBodyInit = Variant;
+  JBodyInit = Variant;
+  JResponseBodyInit = Variant;
 
   // NoInterfaceObject,Exposed=( Window , Worker)
   JBody = class external 'Body'
   public
-    bodyUsed: Boolean;
-    function arrayBuffer: JArrayBuffer; { NewObject }
+    function arrayBuffer: JPromiseArrayBuffer; { NewObject }
     function blob: JBlob; { NewObject }
 // TODO    function formData: FormData; { NewObject }
-    function json: Variant; { NewObject }
-    function text: String; { NewObject }
+    function json: JPromise; { NewObject }
+    function text: JPromiseString; { NewObject }
+
+    property bodyUsed: Boolean; // read only
   end;
 
   TRequestInfo = Variant; // TODO
@@ -94,32 +101,26 @@ type
     const Manual = 'manual';
   end;
 
-  // Constructor( RequestInfo input , optional RequestInit init),Exposed=( Window , Worker)
-  JRequest = class external 'Request'
-  public
-    &method: String;
-    url: String;
-    headers: JHeaders; { SameObject }
-    &type: JRequestType;
-    destination: JRequestDestination;
-    referrer: String;
-// TODO    referrerPolicy: JReferrerPolicy;
-    mode: JRequestMode;
-    credentials: JRequestCredentials;
-    cache: JRequestCache;
-    redirect: JRequestRedirect;
-    integrity: String;
-    keepalive: Boolean;
-    function clone: JRequest; { NewObject }
+  JReferrerPolicy = String;
+  JReferrerPolicyHelper = strict helper for JReferrerPolicy
+    const None = '';
+    const NoReferrer = 'no-referrer';
+    const NoReferrerWhenDowngrade = 'no-referrer-when-downgrade';
+    const SameOrigin = 'same-origin';
+    const Origin = 'origin';
+    const StrictOrigin = 'strict-origin';
+    const OriginWhenCrossOrigin = 'origin-when-cross-origin';
+    const StrictOriginWhenCrossOrigin = 'strict-origin-when-cross-origin';
+    const UnsafeUrl = 'unsafe-url';
   end;
 
   JRequestInit = class external 'RequestInit'
   public
     &method: String;
-// TODO    headers: JHeadersInit;
-    body: TBodyInit;
+    headers: JHeadersInit;
+    body: JBodyInit;
     referrer: String;
-// TODO    referrerPolicy: JReferrerPolicy;
+    referrerPolicy: JReferrerPolicy;
     mode: JRequestMode;
     credentials: JRequestCredentials;
     cache: JRequestCache;
@@ -127,6 +128,30 @@ type
     integrity: String;
     keepalive: Boolean;
     window: Variant;
+  end;
+
+  // Exposed=( Window , Worker)
+  JRequest = class external 'Request'
+  public
+    &method: String;
+    url: String;
+    headers: JHeaders; { SameObject }
+    &type: JRequestType;
+
+    destination: JRequestDestination;
+    referrer: String;
+    referrerPolicy: JReferrerPolicy;
+    mode: JRequestMode;
+    credentials: JRequestCredentials;
+    cache: JRequestCache;
+    redirect: JRequestRedirect;
+    integrity: String;
+    keepalive: Boolean;
+    constructor Create(input: JRequest); overload;
+    constructor Create(input: String); overload;
+    constructor Create(input: JRequest; init: JRequestInit); overload;
+    constructor Create(input: String; init: JRequestInit); overload;
+    function clone: JRequest; { NewObject }
   end;
 
   JResponseType = String;
@@ -139,8 +164,26 @@ type
     const OpaqueRedirect = 'opaque-redirect';
   end;
 
-  // Constructor( optional ResponseBodyInit ? body = null , optional ResponseInit init),Exposed=( Window , Worker)
-  JResponse = class external 'Response'
+  JResponseInit = class external 'ResponseInit'
+  public
+    status: Integer;
+    statusText: String;
+    headers: JHeadersInit;
+  end;
+
+  TOnFulFilledHeaders = procedure(response: JHeaders);
+
+  JPromiseHeaders = class external 'Promise' (JPromise)
+  public
+    constructor Create(Executor: procedure(resolve: TOnFulFilledHeaders; reject: TOnRejected));
+    class function resolve(value: JHeaders): JPromiseHeaders;
+
+    function &then(onFulfilled: TOnFulFilledHeaders): JPromiseHeaders; overload;
+    function &then(onFulfilled: TOnFulFilledHeaders; onRejected: TOnRejected): JPromiseHeaders; overload;
+  end;
+
+  // Exposed=( Window , Worker)
+  JResponse = class external 'Response' (JBody)
   public
     &type: JResponseType;
     url: String;
@@ -149,18 +192,25 @@ type
     ok: Boolean;
     statusText: String;
     headers: JHeaders; { SameObject }
-// TODO    body: JReadableStream;
-    trailer: JHeaders; { SameObject }
+    trailer: JPromiseHeaders;
+    constructor Create; overload;
+    constructor Create(body: JResponseBodyInit); overload;
+    constructor Create(init: JResponseInit); overload;
+    constructor Create(body: JResponseBodyInit; init: JResponseInit); overload;
     function error: JResponse; { NewObject }
     function redirect(url: String; status: Integer = 302): JResponse; { NewObject }
     function clone: JResponse; { NewObject }
   end;
 
-  JResponseInit = class external 'ResponseInit'
+  TOnFulFillResponse = procedure(response: JResponse);
+
+  JPromiseResponse = class external 'Promise' (JPromise)
   public
-    status: Integer;
-    statusText: String;
-// TODO    headers: JHeadersInit;
+    constructor Create(Executor: procedure(resolve: TOnFulFillResponse; reject: TOnRejected));
+    class function resolve(value: JResponse): JPromiseResponse;
+
+    function &then(onFulfilled: TOnFulFillResponse): JPromiseResponse; overload;
+    function &then(onFulfilled: TOnFulFillResponse; onRejected: TOnRejected): JPromiseResponse; overload;
   end;
 
   JWindowOrWorkerGlobalScope = partial class external 'WindowOrWorkerGlobalScope'

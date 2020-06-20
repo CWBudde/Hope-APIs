@@ -2,6 +2,9 @@ unit ECMA.Promise;
 
 interface
 
+uses
+  ECMA.TypedArray;
+
 type
   TOnFulFilled = procedure(response: Variant); 
   TOnRejected = procedure(reason: Variant); 
@@ -16,6 +19,20 @@ type
 
     function &then(onFulfilled: TOnFulFilled): JPromise; overload;
     function &then(onFulfilled: TOnFulFilled; onRejected: TOnRejected): JPromise; overload;
+    procedure catch(onRejected: TOnRejected);
+  end;
+
+
+  JPromiseGeneric<ResponseType> = class external 'Promise'
+  public
+    constructor Create(Executor: procedure(resolve: procedure(response: ResponseType); reject: TOnRejected));
+    class function all(iterable: array of JPromise): JPromise;
+    class function race(iterable: array of JPromise): JPromise;
+    class function reject(reason: Variant): JPromise;
+    class function resolve(value: ResponseType): JPromise;
+
+    function &then(onFulfilled: procedure(response: ResponseType)): JPromise; overload;
+    function &then(onFulfilled: procedure(response: ResponseType); onRejected: TOnRejected): JPromise; overload;
     procedure catch(onRejected: TOnRejected);
   end;
 
@@ -66,3 +83,17 @@ type
     function &then(onFulfilled: TOnFulFilledStrings): JPromiseStrings; overload;
     function &then(onFulfilled: TOnFulFilledStrings; onRejected: TOnRejected): JPromiseStrings; overload;
   end;
+
+
+  TOnFulFilledArrayBuffer = procedure(response: JArrayBuffer);
+
+  JPromiseArrayBuffer = class external 'Promise' (JPromise)
+  public
+    constructor Create(Executor: procedure(resolve: TOnFulFilledArrayBuffer; reject: TOnRejected));
+    class function resolve(value: JArrayBuffer): JPromiseArrayBuffer;
+
+    function &then(onFulfilled: TOnFulFilledArrayBuffer): JPromiseArrayBuffer; overload;
+    function &then(onFulfilled: TOnFulFilledArrayBuffer; onRejected: TOnRejected): JPromiseArrayBuffer; overload;
+  end;
+
+

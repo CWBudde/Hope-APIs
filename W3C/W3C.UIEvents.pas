@@ -49,15 +49,32 @@ type
     modifierSymbolLock: Boolean;
   end;
 
-  JMouseButton = enum (Left, Middle, Right);
-  JMouseWhich = enum (None, Left, Middle, Right);
+  JMouseButton = Integer;
+  JMouseButtonHelper = strict helper for JMouseButton
+    const Left = 0;
+    const Middle = 1;
+    const Right = 2;
+  end;
+  JMouseWhich = Integer;
+  JMouseWhichHelper = strict helper for JMouseWhich
+    const None = 0;
+    const Left = 1;
+    const Middle = 2;
+    const Right = 3;
+  end;
+  JMouseButtons = Integer;
+  JMouseButtonsHelper = strict helper for JMouseButtons
+    const Left = 1;
+    const Middle = 4;
+    const Right = 2;
+  end;
 
   JMouseEventInit = partial class external 'MouseEventInit' (JEventModifierInit)
   public
     screenX, screenY: Integer;
     clientX, clientY: Integer;
     button: JMouseButton;
-    buttons: Integer;
+    buttons: JMouseButtons;
     relatedTarget: JEventTarget;
   end;
 

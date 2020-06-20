@@ -31,6 +31,6 @@ type
     search: String;
     searchParams: JURLSearchParams; { SameObject }
     hash: String;
-    constructor Create (url: String); overload;
-    constructor Create (url, base: String); overload;
+    constructor Create(url: String); overload;
+    constructor Create(url, base: String); overload;
   end;

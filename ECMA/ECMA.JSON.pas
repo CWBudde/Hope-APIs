@@ -14,6 +14,11 @@ type
     function stringify(const Value: Variant; Replacer: array of String): String; overload;
     function stringify(const Value: Variant; Replacer: TKeyValueFilter; Space: String): String; overload;
     function stringify(const Value: Variant; Replacer: array of String; Space: String): String; overload;
+    function stringify(const Value: array of Variant): String; overload;
+    function stringify(const Value: array of Variant; Replacer: TKeyValueFilter): String; overload;
+    function stringify(const Value: array of Variant; Replacer: array of String): String; overload;
+    function stringify(const Value: array of Variant; Replacer: TKeyValueFilter; Space: String): String; overload;
+    function stringify(const Value: array of Variant; Replacer: array of String; Space: String): String; overload;
   end;
 
 var

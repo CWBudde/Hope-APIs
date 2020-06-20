@@ -3,7 +3,7 @@ unit ECMA.RegEx;
 interface
 
 type
-  JRegexFlags = class external 
+  JRegExFlags = class external
     global: Boolean;
     ignoreCase: Boolean;
     multiline: Boolean;
@@ -11,7 +11,7 @@ type
     sticky: Boolean;
   end; 
 
-  JRegEx = class external 'RegEx'
+  JRegExp = class external 'RegExp'
   public
     flags: JRegexFlags; 
     global: Boolean;
@@ -21,8 +21,10 @@ type
     sticky: Boolean;
     unicode: Boolean;
     
-    constructor Create(pattern: String; flags: String);
-    function exec(value: String): array of string;
+    constructor Create(pattern: String); overload;
+    constructor Create(pattern: String; flags: String); overload;
+    function exec(value: String): Variant;
+    function execAsStrings(value: String): array of string; external 'exec';
     function test(value: Variant): Boolean;
     function toSource: String; // non-standard
     function toString: String;

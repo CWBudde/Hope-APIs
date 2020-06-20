@@ -1,4 +1,4 @@
-unit W3C.Html5;
+unit W3C.HTML5;
 
 interface
 
@@ -92,7 +92,7 @@ type
     procedure add(element: JHTMLOptGroupElement); overload;
     procedure add(element: JHTMLOptGroupElement; before: Integer); overload;
     procedure add(element: JHTMLOptGroupElement; before: JHTMLElement); overload;
-    procedure remove(&index: Integer);
+    procedure remove(index: Integer);
 
     property Item[index: Integer]: JHTMLOptionElement read GetItem write SetItem; default;
   end;
@@ -164,6 +164,7 @@ type
 
   JHTMLLinkElement = class external 'HTMLLinkElement' (JHTMLElement)
   public
+    &as: String;
     href: String;
     download: String;
     crossOrigin: String;
@@ -435,8 +436,8 @@ type
   JTimeRanges = class external 'TimeRanges'
   public
     length: Integer;
-    function start(&index: Integer): Float;
-    function &end(&index: Integer): Float;
+    function start(index: Integer): Float;
+    function &end(index: Integer): Float;
   end;
 
   JCanPlayTypeResult = String;
@@ -453,7 +454,7 @@ type
   end;
 
   JTextTrackKind = String;
-  JTextTrackKindHelper = strict helper for JTextTrackMode
+  JTextTrackKindHelper = strict helper for JTextTrackKind
     const Subtitles = 'subtitles';
     const Captions = 'captions';
     const Descriptions = 'descriptions';
@@ -513,7 +514,7 @@ type
     valueType: String;
   end;
 
-  JHTMLVideoElement = class external 'HTMLVideoElement' (JHTMLMediaElement)
+  JHTMLVideoElement = partial class external 'HTMLVideoElement' (JHTMLMediaElement)
   public
     width: Integer;
     height: Integer;
@@ -747,8 +748,8 @@ type
     ch: String;
     chOff: String;
     vAlign: String;
-    function insertRow(&index: Integer = -1): JHTMLElement;
-    procedure deleteRow(&index: Integer);
+    function insertRow(index: Integer = -1): JHTMLElement;
+    procedure deleteRow(index: Integer);
   end;
 
   JHTMLTableRowElement = class external 'HTMLTableRowElement' (JHTMLElement)
@@ -761,8 +762,8 @@ type
     chOff: String;
     vAlign: String;
     bgColor: String; { TreatNullAs=EmptyString }
-    function insertCell(&index: Integer = -1): JHTMLElement;
-    procedure deleteCell(&index: Integer);
+    function insertCell(index: Integer = -1): JHTMLElement;
+    procedure deleteCell(index: Integer);
   end;
 
   JHTMLTableElement = class external 'HTMLTableElement' (JHTMLElement)
@@ -788,8 +789,8 @@ type
     function createTFoot: JHTMLTableSectionElement;
     procedure deleteTFoot;
     function createTBody: JHTMLTableSectionElement;
-    function insertRow(&index: Integer = -1): JHTMLTableRowElement;
-    procedure deleteRow(&index: Integer);
+    function insertRow(index: Integer = -1): JHTMLTableRowElement;
+    procedure deleteRow(index: Integer);
   end;
 
   JHTMLTableCellElement = class external 'HTMLTableCellElement' (JHTMLElement)
@@ -1222,14 +1223,14 @@ type
 
   JDataTransferItemList = partial class external 'DataTransferItemList'
   private
-    function GetItem(Index: Integer): JDataTransferItem;
+    function GetItem(Index: Integer): JDataTransferItem; external array;
   public
     length: Integer;
     function add(data: String; &type: String): JDataTransferItem; overload;
-    procedure remove(&index: Integer);
+    procedure remove(index: Integer);
     procedure clear;
 
-    property Items[Index: Integer]: JDataTransferItem read GetItem;
+    property Items[Index: Integer]: JDataTransferItem read GetItem; default;
   end;
 
   JDataTransfer = partial class external 'DataTransfer'
@@ -1238,6 +1239,7 @@ type
     effectAllowed: String;
     items: JDataTransferItemList; { SameObject }
     types: array of String; { SameObject }
+    constructor Create;
     procedure setDragImage(image: JElement; x, y: Integer);
     function getData(format: String): String;
     procedure setData(format: String; data: String);
@@ -1508,7 +1510,7 @@ type
   JMimeTypeArray = class external 'MimeTypeArray'
   public
     length: Integer;
-    function item(&index: Integer): JMimeType;
+    function item(index: Integer): JMimeType;
     function namedItem(name: String): JMimeType;
   end;
 
@@ -1518,7 +1520,7 @@ type
     description: String;
     filename: String;
     length: Integer;
-    function item(&index: Integer): JMimeType;
+    function item(index: Integer): JMimeType;
     function namedItem(name: String): JMimeType;
   end;
 
@@ -1534,7 +1536,7 @@ type
   public
     length: Integer;
     procedure refresh(reload: Boolean = False);
-    function item(&index: Integer): JPlugin;
+    function item(index: Integer): JPlugin;
     function namedItem(name: String): JPlugin;
   end;
 
@@ -1752,7 +1754,7 @@ type
     function confirm(message: String): Boolean; overload;
     function prompt: String; overload;
     function prompt(message: String): String; overload;
-    function prompt(message: String; &default: String): String; overload;
+    function prompt(message: String; default: String): String; overload;
     procedure print;
     function showModalDialog(url: String): Variant; overload;
     function showModalDialog(url: String; argument: Variant): Variant; overload;

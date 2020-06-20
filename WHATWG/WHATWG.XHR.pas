@@ -6,16 +6,35 @@ uses
   ECMA.TypedArray, WHATWG.DOM, WHATWG.HTML, W3C.FileAPI;
 
 type
+  JProgressEventInit = class external 'ProgressEventInit' (JEventInit)
+  public
+    lengthComputable: Boolean;
+    loaded: Integer;
+    total: Integer;
+  end;
+
+  // Exposed = (Window, DedicatedWorker, SharedWorker)
+  JProgressEvent = class external 'ProgressEvent' (JEvent)
+  public
+    lengthComputable: Boolean;
+    loaded: Integer;
+    total: Integer;
+    constructor Create(&type: String); overload;
+    constructor Create(&type: String; eventInitDict: JProgressEventInit); overload;
+  end;
+
+  TProgressEventHandler = procedure(event: JProgressEvent);
+
   // Exposed = (Window, DedicatedWorker, SharedWorker)
   JXMLHttpRequestEventTarget = class external 'XMLHttpRequestEventTarget' (JEventTarget)
   public
-    onloadstart: TEventHandler;
-    onprogress: TEventHandler;
-    onabort: TEventHandler;
-    onerror: TEventHandler;
-    onload: TEventHandler;
-    ontimeout: TEventHandler;
-    onloadend: TEventHandler;
+    onloadstart: TProgressEventHandler;
+    onprogress: TProgressEventHandler;
+    onabort: TProgressEventHandler;
+    onerror: TProgressEventHandler;
+    onload: TProgressEventHandler;
+    ontimeout: TProgressEventHandler;
+    onloadend: TProgressEventHandler;
   end;
 
   // Exposed = (Window, DedicatedWorker, SharedWorker)
@@ -71,23 +90,6 @@ type
   end;
 
   TFormDataEntryValue = Variant; // TODO
-
-  JProgressEventInit = class external 'ProgressEventInit' (JEventInit)
-  public
-    lengthComputable: Boolean;
-    loaded: Integer;
-    total: Integer;
-  end;
-
-  // Exposed = (Window, DedicatedWorker, SharedWorker)
-  JProgressEvent = class external 'ProgressEvent' (JEvent)
-  public
-    lengthComputable: Boolean;
-    loaded: Integer;
-    total: Integer;
-    constructor Create(&type: String); overload;
-    constructor Create(&type: String; eventInitDict: JProgressEventInit); overload;
-  end;
 
   // Exposed = (Window, Worker)
   JFormData = class external 'FormData'
